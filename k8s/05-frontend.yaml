@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travelo-frontend
+  namespace: travelo
+  labels:
+    app.kubernetes.io/name: travelo-frontend
+    app.kubernetes.io/part-of: travelo
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: travelo-frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: travelo-frontend
+        app.kubernetes.io/part-of: travelo
+    spec:
+      containers:
+        - name: frontend
+          image: jdnl1/travelo-frontend:1.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+          env:
+            - name: BACKEND_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: travelo-config
+                  key: BACKEND_HOST
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: travelo-frontend
+  namespace: travelo
+  labels:
+    app.kubernetes.io/name: travelo-frontend
+    app.kubernetes.io/part-of: travelo
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: travelo-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

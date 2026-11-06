@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travelo-backend
+  namespace: travelo
+  labels:
+    app.kubernetes.io/name: travelo-backend
+    app.kubernetes.io/part-of: travelo
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: travelo-backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: travelo-backend
+        app.kubernetes.io/part-of: travelo
+    spec:
+      initContainers:
+        - name: wait-for-database
+          image: busybox:1.37
+          command: ["sh", "-c", "until nc -z travelo-database 3306; do echo en attente de la base; sleep 2; done"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 8Mi
+            limits:
+              cpu: 50m
+              memory: 16Mi
+      containers:
+        - name: backend
+          image: jdnl1/travelo-backend:1.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: travelo-config
+          env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: travelo-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 250m
+              memory: 384Mi
+            limits:
+              cpu: "1"
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: travelo-backend
+  namespace: travelo
+  labels:
+    app.kubernetes.io/name: travelo-backend
+    app.kubernetes.io/part-of: travelo
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: travelo-backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
