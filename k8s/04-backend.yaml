@@ -53,6 +53,27 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
+          startupProbe:
+            httpGet:
+              path: /api/hello
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 36        # jusqu'à 180 s pour démarrer
+          readinessProbe:
+            httpGet:
+              path: /api/hello
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/hello
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3    
           resources:
             requests:
               cpu: 250m
