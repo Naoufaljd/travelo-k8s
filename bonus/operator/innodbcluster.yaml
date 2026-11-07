@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: travelo-db
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: travelo-mysql-root
+  namespace: travelo-db
+stringData:
+  rootUser: root
+  rootHost: "%"
+  rootPassword: "NaoufalK8s"
+---
+apiVersion: mysql.oracle.com/v2
+kind: InnoDBCluster
+metadata:
+  name: travelo-mysql
+  namespace: travelo-db
+spec:
+  secretName: travelo-mysql-root
+  tlsUseSelfSigned: true
+  instances: 3
+  router:
+    instances: 1
