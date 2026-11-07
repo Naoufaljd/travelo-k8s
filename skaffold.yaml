@@ -1,0 +1,25 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: travelo
+build:
+  local:
+    push: false
+    useDockerCLI: true
+    useBuildkit: true
+  artifacts:
+    - image: jdnl1/travelo-backend
+      context: ../../devoir/travelo-app/travelo_backend
+      docker:
+        dockerfile: Dockerfile
+    - image: jdnl1/travelo-frontend
+      context: ../../devoir/travelo-app/travelo_frontend
+      docker:
+        dockerfile: Dockerfile
+manifests:
+  rawYaml:
+    - k8s/04-backend.yaml
+    - k8s/05-frontend.yaml
+deploy:
+  kubeContext: docker-desktop
+  kubectl: {}
