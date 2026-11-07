@@ -1,0 +1,10 @@
+backend:
+  image: jdnl1/travelo-backend:1.1
+  replicas: 2
+frontend:
+  image: jdnl1/travelo-frontend:1.1
+  replicas: 2
+database:
+  password: change-me
+ingress:
+  host: helm.travelo.localhost

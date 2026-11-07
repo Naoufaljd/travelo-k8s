@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  travelo:
+  - apiVersion: v2
+    appVersion: "1.1"
+    created: "2026-11-07T11:01:52.451285Z"
+    description: Chart Helm de l'application Travelo (React, Spring Boot, MySQL)
+    digest: 1de9a9f479d9c81f479eeae5501a28a24a5742c85a226ca731d78df5d602bb60
+    name: travelo
+    type: application
+    urls:
+    - https://naoufaljd.github.io/travelo-k8s/travelo-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-11-07T11:01:52.446158Z"

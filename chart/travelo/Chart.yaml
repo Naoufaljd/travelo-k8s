@@ -1,0 +1,6 @@
+apiVersion: v2
+name: travelo
+description: Chart Helm de l'application Travelo (React, Spring Boot, MySQL)
+type: application
+version: 0.1.0
+appVersion: "1.1"
